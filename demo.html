@@ -1,0 +1,91 @@
+<tw-storydata name="demo" startnode="1" creator="Twine" creator-version="2.0.8" ifid="66EBE5D2-358A-43BF-83DB-FFD599560DC7" format="Snowman" options=""><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">#passage {
+  max-width: 38em;
+  margin: 0 auto 0 250px;
+  line-height: 145%;
+}</style><script role="script" id="twine-user-script" type="text/twine-javascript">document.twine = {};
+
+document.twine.hello = function() {
+	alert("hello world");
+};
+
+document.twine.contents = function() {
+	var contents = document.createElement("contents");
+	contents.setAttribute('style', 'position: absolute; top: 10px; left: 10px');
+	contents.innerHTML += "<strong>Contents</strong>: </br></br>";
+	$('tw-passagedata').each(function(i, ele) {
+					if (ele.getAttribute("tags") == "chapter") {
+						var name = ele.getAttribute("name");
+						contents.innerHTML += '<a href="javascript:void(0)" data-passage="' + name + '">' + name + '</a>';
+						contents.innerHTML += '</br></br>';
+					}
+			});
+	
+	contents.innerHTML += '<strong>Resources</strong>: </br></br>';
+	contents.innerHTML += '<a href="http:\/\/dictionary.com" target="_blank"> Dictionary</a> </br></br>';
+	contents.innerHTML += '<a href="http:\/\/thesaurus.com" target="_blank"> Thesaurus</a> </br></br>';
+	document.body.appendChild(contents);
+}
+
+document.twine.contents();
+</script><tw-passagedata pid="1" name="Start" tags="chapter" position="714,71">&lt;font size=&quot;5&quot;&gt;&lt;b&gt;Lesson 1&lt;/b&gt;&lt;/font&gt;
+
+Here are the instructions to start the lesson:
+
+&lt;code&gt;&lt;script src=&quot;jquery.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;http:\/\/localhost:63342/slideshow/mediaelement-and-player.min.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;http:\/\/localhost:63342/slideshow/mediaelementplayer.css&quot; /&gt;&lt;/code&gt;
+    &lt;video id=&quot;video&quot; controls=&quot;controls&quot; preload=&quot;metadata&quot; style=&quot;height: 350px&quot;&gt;
+        &lt;source id=&quot;mp4Source&quot; src=&quot;http:\/\/localhost:63342/slideshow/eh5v.files/html5video/instructions.m4v&quot; type=&quot;video/mp4&quot; /&gt;
+        &lt;source id=&quot;oggSource&quot; src=&quot;http:\/\/localhost:63342/slideshow/eh5v.files/html5video/instructions.ogv&quot; type=&quot;video/ogg&quot; /&gt;
+        &lt;track src=&quot;http:\/\/localhost:63342/slideshow/subtitles.vtt&quot; label=&quot;English&quot; kind=&quot;subtitles&quot; srclang=&quot;en&quot; default &gt;
+        &lt;track src=&quot;http:\/\/localhost:63342/slideshow/subtitlesES.vtt&quot; label=&quot;Spanish&quot; kind=&quot;subtitles&quot; srclang=&quot;es&quot; &gt;
+    &lt;/video&gt;
+    
+&lt;%	
+	finish = function(player) {
+    	player.pause();
+    }
+
+	success = function() {
+	    var player = new MediaElementPlayer(&#x27;#video&#x27;, {videoHeight: 350,
+        videoWidth: 525, enablePluginDebug: true});
+        player.play();
+        setTimeout(finish, 100, player);
+    }
+	setTimeout(success, 500)
+    
+    if (!document.flag) {
+      var imported = document.createElement(&#x27;script&#x27;);
+      imported.src = &#x27;http:\/\/localhost:63342/slideshow/mediaelement-and-player.min.js&#x27;;
+      document.head.appendChild(imported);
+      document.flag = true;
+    }
+%&gt;
+
+&lt;div align=&quot;right&quot;&gt; [[Next-&gt;Fridge Poetry]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="2" name="Activity Start" tags="chapter" position="710,597">How many players are there on the computer?
+
+[[1 player -&gt; Guess Who 1p]], [[2 players -&gt; Guess Who 2p]], [[3+ players -&gt; Guess Who 3p]]</tw-passagedata><tw-passagedata pid="3" name=" Guess Who 1p" tags="" position="521,761">Here is some content for 1 person.
+
+&lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="4" name=" Guess Who 2p" tags="" position="712,764">Here is some content for 2 people.
+
+&lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name=" Guess Who 3p" tags="" position="899,758">Here is some content for 3 or more people.
+
+&lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name=" Guess Who Question" tags="chapter" position="709,931">Here is a question with the [[right answer]] and the [[wrong answer]]</tw-passagedata><tw-passagedata pid="7" name="right answer" tags="" position="633,1090">Good job! This is the end of the lesson.</tw-passagedata><tw-passagedata pid="8" name="wrong answer" tags="" position="799,1090">Here&#x27;s some feedback, try again!
+
+&lt;div align=&quot;right&quot;&gt; [[Next -&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="Fridge Poetry" tags="chapter" position="716,245">Now listen to some sample Guess Who text:
+
+&lt;audio controls&gt;
+ &lt;source src=&quot;http:\/\/localhost:63342/guess-who/assets/ALEX.m4a&quot;&gt;
+&lt;/audio&gt;
+
+And practice vocabulary by playing Fridge Poetry:
+
+&lt;object&gt; &lt;embed src=http:\/\/localhost:63342/fridge-poetry/index.html?http:\/\/localhost:63342/slideshow/words.txt style=&quot;width: 1100px; height: 500px&quot;&gt; &lt;/embed&gt;&lt;/object&gt;
+
+&lt;div align=&quot;right&quot;&gt; [[Next-&gt;Guess Who]] &lt;/div&gt;
+</tw-passagedata><tw-passagedata pid="10" name="Guess Who" tags="" position="717,426">Here is a Guess Who board to review:
+
+&lt;object&gt; &lt;embed src=http:\/\/localhost:63342/guess-who/index.html style=&quot;width: 1100px; height: 600px&quot;&gt; &lt;/embed&gt;&lt;/object&gt;
+
+&lt;div align=&quot;right&quot;&gt; [[Next-&gt;Activity Start]] &lt;/div&gt;
+</tw-passagedata></tw-storydata>
