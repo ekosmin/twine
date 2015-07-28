@@ -1,8 +1,10 @@
-<tw-storydata name="demo" startnode="1" creator="Twine" creator-version="2.0.8" ifid="66EBE5D2-358A-43BF-83DB-FFD599560DC7" format="Snowman" options=""><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">#passage {
+<tw-storydata name="demo" startnode="" creator="Twine" creator-version="2.0.8" ifid="66EBE5D2-358A-43BF-83DB-FFD599560DC7" format="Snowman" options=""><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">#passage {
   max-width: 38em;
   margin: 0 auto 0 250px;
   line-height: 145%;
 }
+
+
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">document.twine = {};
 
 document.twine.hello = function() {
@@ -28,6 +30,16 @@ document.twine.contents = function() {
 }
 
 document.twine.contents();
+
+document.twine.checkFlag = function(flag, callback) {
+  if (localStorage.getItem(flag) == "true") {
+  	callback.call(this);
+  } else {
+    setTimeout(document.twine.checkFlag, 500, flag, callback);
+  }
+}
+
+
 
 </script><tw-passagedata pid="1" name="Start" tags="chapter" position="305,31">&lt;font size=&quot;6&quot;&gt;&lt;b&gt;Lesson 1&lt;/b&gt;&lt;/font&gt;
 
@@ -64,7 +76,7 @@ Here are the instructions to start the lesson:
     }
 %&gt;
 
-&lt;div align=&quot;right&quot;&gt; [[Next-&gt;Fridge Poetry]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="2" name="Activity Start" tags="chapter" position="308,557">How many players are there on the computer?
+&lt;div align=&quot;right&quot;&gt; [[Next-&gt;Fridge Poetry]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="2" name="Activity Start" tags="chapter" position="308,556">How many players are there on the computer?
 
 [[1 player -&gt; Guess Who 1p]], [[2 players -&gt; Guess Who 2p]], [[3+ players -&gt; Guess Who 3p]]</tw-passagedata><tw-passagedata pid="3" name=" Guess Who 1p" tags="" position="306,738">Here is some content for 1 person.
 
@@ -74,7 +86,9 @@ Here are the instructions to start the lesson:
 
 &lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name=" Guess Who Question" tags="chapter" position="308,916">Here is a question with the [[right answer]] and the [[wrong answer]]</tw-passagedata><tw-passagedata pid="7" name="right answer" tags="" position="224,1064">Good job! This is the end of the lesson.</tw-passagedata><tw-passagedata pid="8" name="wrong answer" tags="" position="379,1059">Here&#x27;s some feedback, try again!
 
-&lt;div align=&quot;right&quot;&gt; [[Next -&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="Fridge Poetry" tags="chapter" position="307,205">Now listen to some sample Guess Who text:
+&lt;div align=&quot;right&quot;&gt; [[Next -&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="Fridge Poetry" tags="chapter" position="306,205">&lt;% localStorage.setItem(&quot;level&quot;, &quot;Fridge Poetry&quot;); %&gt;
+
+Now listen to some sample Guess Who text:
 
 &lt;audio controls&gt;
  &lt;source src=&quot;../guess-who/assets/ALEX.m4a&quot;&gt;
@@ -90,4 +104,11 @@ And practice vocabulary by playing Fridge Poetry:
 &lt;object&gt; &lt;embed src=../guess-who/index.html style=&quot;width: 1100px; height: 600px&quot;&gt; &lt;/embed&gt;&lt;/object&gt;
 
 &lt;div align=&quot;right&quot;&gt; [[Next-&gt;Activity Start]] &lt;/div&gt;
-</tw-passagedata></tw-storydata>
+</tw-passagedata><tw-passagedata pid="11" name="Main Menu" tags="" position="121,28">&lt;% data-passage = &quot;Start&quot; %&gt;
+Press here to [[start-&gt;Start]]!
+&lt;%
+var level = localStorage.getItem(&quot;level&quot;);
+if (level != null &amp;&amp; level != &quot;Start&quot;) {
+	print(&quot;Or, press here to continue at [[&quot; + level + &quot;]].&quot;);
+}
+%&gt;</tw-passagedata></tw-storydata>
