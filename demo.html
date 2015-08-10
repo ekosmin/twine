@@ -1,4 +1,4 @@
-<tw-storydata name="demo" startnode="13" creator="Twine" creator-version="2.0.8" ifid="66EBE5D2-358A-43BF-83DB-FFD599560DC7" format="Snowman" options=""><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">#passage {
+<tw-storydata name="demo" startnode="1" creator="Twine" creator-version="2.0.8" ifid="66EBE5D2-358A-43BF-83DB-FFD599560DC7" format="Snowman" options=""><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">#passage {
   max-width: 38em;
   margin: 0 auto 0 250px;
   line-height: 145%;
@@ -44,7 +44,11 @@ document.twine.checkFlag = function(flag, callback) {
 
 document.twine.arrGet = function(arrName) {
 	str = localStorage.getItem(arrName);
-    return JSON.parse(str);
+	arr = JSON.parse(str);
+	if (arr == null) {
+		arr = [];
+	}
+  return arr;
 }
 
 document.twine.arrSet = function(arrName, arr) {
@@ -72,7 +76,59 @@ document.twine.arrDel = function(arrName, index) {
 	currArr = document.twine.arrGet(arrName);
 	currArr.splice(index, 1);
   document.twine.arrSet(arrName, currArr);
-}</script><tw-passagedata pid="1" name="Start" tags="chapter" position="305,32">&lt;font size=&quot;6&quot;&gt;&lt;b&gt;Lesson 1&lt;/b&gt;&lt;/font&gt;
+}
+
+
+
+function Request(url, params) {
+	this.url = url;
+    this.params = params;
+}
+
+document.twine.post = function(urlSuffix, params, preventDump) {
+  var url = "http://ec2-52-25-110-29.us-west-2.compute.amazonaws.com/Project/" + urlSuffix;
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+      if (request.readyState == 4) {
+          if (request.status == 200) {
+              console.log("success posting to url " + url + " with params " + params);
+              if (!preventDump) {
+              	document.twine.dumpRequests();
+              }
+          } else {
+              console.log("failure posting to url " + url + " with params " + params);
+              document.twine.arrPush("syncQueue", new Request(urlSuffix, params));
+          }
+      }
+  };
+  request.open("POST", url, true);
+  request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  request.send(params);
+}
+
+document.twine.saveRequest = function(url, params) {
+	document.twine.arrPush("syncQueue", new Request(url, params));
+}
+
+document.twine.dumpRequests = function() {
+	var requests = document.twine.arrGet("syncQueue");
+    for (var i = 0; i < requests.length; i++) {
+    	var request = document.twine.arrShift("syncQueue");
+        document.twine.post(request.url, request.params, true);
+    }
+}
+
+
+
+document.twine.UUID = function() {
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+};</script><tw-passagedata pid="1" name="Start" tags="chapter" position="305,32">&lt;font size=&quot;6&quot;&gt;&lt;b&gt;Lesson 1&lt;/b&gt;&lt;/font&gt;
 
 Here are the instructions to start the lesson:
 
@@ -107,6 +163,11 @@ Here are the instructions to start the lesson:
     }
 %&gt;
 
+&lt;%
+	document.twine.studentUUID = document.twine.UUID();
+	document.twine.post(&quot;game/&quot;, &quot;name=&quot; + document.twine.studentUUID);
+%&gt;
+
 &lt;div align=&quot;right&quot;&gt; [[Next-&gt;Fridge Poetry]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="2" name="Activity Start" tags="chapter" position="308,556">How many players are there on the computer?
 
 [[1 player -&gt; Guess Who 1p]], [[2 players -&gt; Guess Who 2p]], [[3+ players -&gt; Guess Who 3p]]</tw-passagedata><tw-passagedata pid="3" name=" Guess Who 1p" tags="" position="306,738">Here is some content for 1 person.
@@ -115,7 +176,15 @@ Here are the instructions to start the lesson:
 
 &lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name=" Guess Who 3p" tags="" position="498,755">Here is some content for 3 or more people.
 
-&lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name=" Guess Who Question" tags="chapter" position="308,916">Here is a question with the [[right answer]] and the [[wrong answer]]</tw-passagedata><tw-passagedata pid="7" name="right answer" tags="" position="224,1064">Good job! This is the end of the lesson.</tw-passagedata><tw-passagedata pid="8" name="wrong answer" tags="" position="379,1059">Here&#x27;s some feedback, try again!
+&lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name=" Guess Who Question" tags="chapter" position="308,916">Here is a question with the [[right answer]] and the [[wrong answer]]</tw-passagedata><tw-passagedata pid="7" name="right answer" tags="" position="224,1064">&lt;%
+	document.twine.post(&quot;game/response&quot;, &quot;name=&quot; + document.twine.studentUUID + &quot;;answer=right&quot;);
+%&gt;
+
+Good job! This is the end of the lesson.</tw-passagedata><tw-passagedata pid="8" name="wrong answer" tags="" position="379,1059">&lt;%
+	document.twine.post(&quot;game/response&quot;, &quot;name=&quot; + document.twine.studentUUID + &quot;;answer=wrong&quot;);
+%&gt;
+
+Here&#x27;s some feedback, try again!
 
 &lt;div align=&quot;right&quot;&gt; [[Next -&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="Fridge Poetry" tags="chapter" position="306,204">&lt;% localStorage.setItem(&quot;level&quot;, &quot;Fridge Poetry&quot;); %&gt;
 
@@ -142,7 +211,7 @@ if (level == null) {
 }
 print(&#x27;&lt;a href=&quot;javascript:void(0)&quot; data-passage=&quot;&#x27; + level + &#x27;&quot; id=&quot;link&quot;&gt; foobar &lt;/a&gt;&#x27;);
 %&gt;
-</tw-passagedata><tw-passagedata pid="12" name="Test" tags="" position="534,69">&lt;%
+</tw-passagedata><tw-passagedata pid="12" name="Test" tags="" position="657,79">&lt;%
 var a = document.createElement(&#x27;a&#x27;);
 a.id = &quot;link&quot;;
 a.href = &quot;javascript:void(0)&quot;;
@@ -150,45 +219,10 @@ a.setAttribute(&quot;data-passage&quot;, &quot;Start&quot;);
 document.body.appendChild(a);
 a.click();
 %&gt;</tw-passagedata><tw-passagedata pid="13" name="AJAX Test" tags="" position="659,237">&lt;%
-function Request(url, params) {
-	this.url = url;
-    this.params = params;
-}
 
-document.twine.post = function(urlSuffix, params, preventDump) {
-  var url = &quot;http://ec2-52-25-110-29.us-west-2.compute.amazonaws.com/Project/&quot; + urlSuffix;
-  var request = new XMLHttpRequest();
-  request.onreadystatechange = function() {
-      if (request.readyState == 4) {
-          if (request.status == 200) {
-              console.log(&quot;success posting to url &quot; + url + &quot; with params &quot; + params);
-              if (!preventDump) {
-              	document.twine.dumpRequests();
-              }
-          } else {
-              console.log(&quot;failure posting to url &quot; + url + &quot; with params &quot; + params);
-              document.twine.arrPush(&quot;syncQueue&quot;, new Request(urlSuffix, params));
-          }
-      }
-  };
-  request.open(&quot;POST&quot;, url, true);
-  request.setRequestHeader(&quot;Content-type&quot;, &quot;application/x-www-form-urlencoded&quot;);
-  request.send(params);
-}
 
-document.twine.saveRequest = function(url, params) {
-	document.twine.arrPush(&quot;syncQueue&quot;, new Request(url, params));
-}
-
-document.twine.dumpRequests = function() {
-	var requests = document.twine.arrGet(&quot;syncQueue&quot;);
-    for (var i = 0; i &lt; requests.length; i++) {
-    	var request = document.twine.arrShift(&quot;syncQueue&quot;);
-        document.twine.post(request.url, request.params, true);
-    }
-}
-
-document.twine.post(&quot;game/&quot;, &quot;name=newtest&quot;);
+document.twine.post(&quot;game/&quot;, &quot;name=djtest&quot;);
+document.twine.post(&quot;game/response/&quot;, &quot;name=djtest;answer=correct&quot;);
 
 %&gt;</tw-passagedata><tw-passagedata pid="14" name="Request Test" tags="" position="661,382">&lt;%
 
