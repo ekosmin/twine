@@ -1,8 +1,9 @@
-<tw-storydata name="demo" startnode="14" creator="Twine" creator-version="2.0.8" ifid="66EBE5D2-358A-43BF-83DB-FFD599560DC7" format="Snowman" options=""><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">#passage {
+<tw-storydata name="demo" startnode="13" creator="Twine" creator-version="2.0.8" ifid="66EBE5D2-358A-43BF-83DB-FFD599560DC7" format="Snowman" options=""><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">#passage {
   max-width: 38em;
   margin: 0 auto 0 250px;
   line-height: 145%;
 }
+
 
 
 
@@ -40,6 +41,7 @@ document.twine.checkFlag = function(flag, callback) {
     setTimeout(document.twine.checkFlag, 500, flag, callback);
   }
 }
+
 
 
 
@@ -122,24 +124,26 @@ a.href = &quot;javascript:void(0)&quot;;
 a.setAttribute(&quot;data-passage&quot;, &quot;Start&quot;);
 document.body.appendChild(a);
 a.click();
-%&gt;</tw-passagedata><tw-passagedata pid="13" name="AJAX Test" tags="" position="564,245">&lt;%
-var name = &quot;tester&quot;;
-var request = new XMLHttpRequest();
-            request.onreadystatechange = function()
-            {
-                if (request.readyState == 4)
-                {
-                    if (request.status == 200) {
-                        console.log(&quot;success saving student &quot; + name);
-                    } else {
-                        console.log(&quot;failed to send student &quot; + name + &quot;. Saving locally.&quot;);
-                    }
-                }
-            };
-            var parameters = &quot;name=tester&quot;;
-            request.open(&quot;POST&quot;, &quot;http://ec2-52-25-110-29.us-west-2.compute.amazonaws.com/Project/game/&quot;, true);
-            request.setRequestHeader(&quot;Content-type&quot;, &quot;application/x-www-form-urlencoded&quot;);
-            request.send(parameters);
+%&gt;</tw-passagedata><tw-passagedata pid="13" name="AJAX Test" tags="" position="562,244">&lt;%
+document.twine.post = function(urlSuffix, params) {
+  var url = &quot;http://ec2-52-25-110-29.us-west-2.compute.amazonaws.com/Project/&quot; + urlSuffix;
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+      if (request.readyState == 4) {
+          if (request.status == 200) {
+              console.log(&quot;success posting to url &quot; + url + &quot; with params &quot; + params);
+          } else {
+              console.log(&quot;failure posting to url &quot; + url + &quot; with params &quot; + params);
+          }
+      }
+  };
+  request.open(&quot;POST&quot;, url, true);
+  request.setRequestHeader(&quot;Content-type&quot;, &quot;application/x-www-form-urlencoded&quot;);
+  request.send(params);
+}
+
+document.twine.post(&quot;game/&quot;, &quot;name=newtest&quot;);
+
 %&gt;</tw-passagedata><tw-passagedata pid="14" name="Local Storage Array Test" tags="" position="712,247">&lt;%
 document.twine.arrGet = function(arrName) {
 	str = localStorage.getItem(arrName);
@@ -168,4 +172,15 @@ document.twine.arrDel = function(arrName, object) {
     	document.twine.arrSet(arrName, currArr);
     }
 }
+%&gt;</tw-passagedata><tw-passagedata pid="15" name="Request Test" tags="" position="661,382">&lt;%
+
+function Request(url, params) {
+	this.url = url;
+    this.params = params;
+}
+
+var foo = new Request(&quot;foo&quot;, &quot;bar&quot;);
+alert(foo.url);
+alert(foo.params);
+
 %&gt;</tw-passagedata></tw-storydata>
