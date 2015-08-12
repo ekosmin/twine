@@ -9,24 +9,33 @@
 
 
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">document.twine = {};
+document.globals = {};
 
-document.twine.hello = function() {
-	alert("hello world");
-};
+// Table of contents
 
 document.twine.contents = function() {
 	var contents = document.createElement("contents");
 	contents.setAttribute('style', 'position: absolute; top: 10px; left: 10px');
 	contents.innerHTML += "<strong>Contents</strong>: </br></br>";
+	writePassages(contents);
+	contents.innerHTML += '<strong>Resources</strong>: </br></br>';
+	contents.innerHTML += '<a href="http:\/\/dictionary.com" target="_blank"> Dictionary</a> </br></br>';
+	contents.innerHTML += '<a href="http:\/\/thesaurus.com" target="_blank"> Thesaurus</a> </br></br>';
+	document.body.appendChild(contents);
+}
+
+writePassages = function(contents) {
 	eles = [];
 	$('tw-passagedata').each(function(i, ele) {
 		eles.push(ele);
 	});
+	
 	sorted = eles.sort(function(a, b) {
   	x = parseInt(a.getAttribute("position").split(",")[1]);
   	y = parseInt(b.getAttribute("position").split(",")[1]);
   	return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 	});
+	
 	for (var i in sorted) {
 		ele = sorted[i];
 		if (ele.getAttribute("tags") == "chapter") {
@@ -35,13 +44,40 @@ document.twine.contents = function() {
 			contents.innerHTML += '</br></br>';
 		}
 	}
-	contents.innerHTML += '<strong>Resources</strong>: </br></br>';
-	contents.innerHTML += '<a href="http:\/\/dictionary.com" target="_blank"> Dictionary</a> </br></br>';
-	contents.innerHTML += '<a href="http:\/\/thesaurus.com" target="_blank"> Thesaurus</a> </br></br>';
-	document.body.appendChild(contents);
 }
 
 document.twine.contents();
+
+// Setting and updating student answer scores
+
+initScores = function(contents) {
+	scores = document.createElement("scores");
+	scores.innerHTML = "added";
+	document.globals.right = 0;
+	document.globals.wrong = 0;
+	$("contents")[0].appendChild(scores);
+	updateScores();
+}
+
+document.twine.answerRight = function() {
+	document.globals.right += 1;
+	updateScores();
+}
+
+document.twine.answerWrong = function() {
+	document.globals.wrong += 1;
+	updateScores();
+}
+
+updateScores = function() {
+	scores = $("scores")[0];
+	scores.innerHTML = "Right: " + document.globals.right + "</br>";
+	scores.innerHTML += "Wrong: " + document.globals.wrong + "</br>";
+}
+
+initScores();
+
+// Checks for local storage flags, and executes callbacks for app communication
 
 document.twine.checkFlag = function(flag, callback) {
   if (localStorage.getItem(flag) == "true") {
@@ -50,6 +86,8 @@ document.twine.checkFlag = function(flag, callback) {
     setTimeout(document.twine.checkFlag, 500, flag, callback);
   }
 }
+
+// Functions for array use in local storage
 
 document.twine.arrGet = function(arrName) {
 	str = localStorage.getItem(arrName);
@@ -87,7 +125,7 @@ document.twine.arrDel = function(arrName, index) {
   document.twine.arrSet(arrName, currArr);
 }
 
-
+// Functions for storing and sending server requests
 
 function Request(url, params) {
 	this.url = url;
@@ -127,7 +165,7 @@ document.twine.dumpRequests = function() {
     }
 }
 
-
+// UUID generation code
 
 document.twine.UUID = function() {
     var d = new Date().getTime();
@@ -187,10 +225,12 @@ Here are the instructions to start the lesson:
 
 &lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name=" Guess Who Question" tags="chapter" position="308,916">Here is a question with the [[right answer]] and the [[wrong answer]]</tw-passagedata><tw-passagedata pid="7" name="right answer" tags="" position="224,1064">&lt;%
 	document.twine.post(&quot;game/response&quot;, &quot;name=&quot; + document.twine.studentUUID + &quot;;answer=right&quot;);
+    document.twine.answerRight();
 %&gt;
 
 Good job! This is the end of the lesson.</tw-passagedata><tw-passagedata pid="8" name="wrong answer" tags="" position="379,1059">&lt;%
 	document.twine.post(&quot;game/response&quot;, &quot;name=&quot; + document.twine.studentUUID + &quot;;answer=wrong&quot;);
+    document.twine.answerWrong();
 %&gt;
 
 Here&#x27;s some feedback, try again!
