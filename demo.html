@@ -55,9 +55,18 @@ initScores = function(contents) {
 	scores.innerHTML = "added";
 	document.globals.right = 0;
 	document.globals.wrong = 0;
+	$("contents")[0].innerHTML += '<strong>Answers</strong>: </br></br>';
 	$("contents")[0].appendChild(scores);
 	updateScores();
 }
+
+updateScores = function() {
+	scores = $("scores")[0];
+	scores.innerHTML = "Right: " + document.globals.right + "</br></br>";
+	scores.innerHTML += "Wrong: " + document.globals.wrong + "</br></br>";
+}
+
+initScores();
 
 document.twine.answerRight = function() {
 	document.globals.right += 1;
@@ -68,14 +77,6 @@ document.twine.answerWrong = function() {
 	document.globals.wrong += 1;
 	updateScores();
 }
-
-updateScores = function() {
-	scores = $("scores")[0];
-	scores.innerHTML = "Right: " + document.globals.right + "</br>";
-	scores.innerHTML += "Wrong: " + document.globals.wrong + "</br>";
-}
-
-initScores();
 
 // Checks for local storage flags, and executes callbacks for app communication
 
