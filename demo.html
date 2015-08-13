@@ -11,6 +11,9 @@
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">document.twine = {};
 document.globals = {};
 
+// A communication point for embedded apps; cleared on restart
+localStorage.comm = "{}";
+
 // Table of contents
 
 document.twine.contents = function() {
@@ -81,11 +84,18 @@ document.twine.answerWrong = function() {
 // Checks for local storage flags, and executes callbacks for app communication
 
 document.twine.checkFlag = function(flag, callback) {
-  if (localStorage.getItem(flag) == "true") {
+	var comm = JSON.parse(localStorage.getItem("comm"));
+  if (comm[flag] == "true") {
   	callback.call(this);
   } else {
     setTimeout(document.twine.checkFlag, 500, flag, callback);
   }
+}
+
+document.twine.resetFlag = function(flag) {
+		var comm = JSON.parse(localStorage.getItem("comm"));
+		comm[flag] = null;
+		localStorage.comm = JSON.stringify(comm);
 }
 
 // Functions for array use in local storage
@@ -236,7 +246,18 @@ Good job! This is the end of the lesson.</tw-passagedata><tw-passagedata pid="8"
 
 Here&#x27;s some feedback, try again!
 
-&lt;div align=&quot;right&quot;&gt; [[Next -&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="Fridge Poetry" tags="chapter" position="310,204">&lt;% localStorage.setItem(&quot;level&quot;, &quot;Fridge Poetry&quot;); %&gt;
+&lt;div align=&quot;right&quot;&gt; [[Next -&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="Fridge Poetry" tags="chapter" position="299,205">&lt;%
+var finished = function() {
+	var sentence = JSON.parse(localStorage.comm)[&quot;poetrySentence&quot;];
+	document.getElementById(&quot;sentence&quot;).innerHTML = &quot;Now review your sentence with a partner: &quot; + sentence;
+	document.getElementById(&quot;nextButton&quot;).style.display = &#x27;block&#x27;;
+    
+    document.twine.resetFlag(&quot;poetryDone&quot;);
+    document.twine.checkFlag(&quot;poetryDone&quot;, finished);
+};
+
+document.twine.checkFlag(&quot;poetryDone&quot;, finished);
+%&gt;
 
 Now listen to some sample Guess Who text:
 
@@ -244,11 +265,13 @@ Now listen to some sample Guess Who text:
  &lt;source src=&quot;../guess-who/assets/ALEX.m4a&quot;&gt;
 &lt;/audio&gt;
 
-And practice vocabulary by playing Fridge Poetry:
+And practice vocabulary by playing Fridge Poetry. Press the button when you&#x27;re done:
 
 &lt;object&gt; &lt;embed src=../fridge-poetry/index.html?../slideshow/words.txt style=&quot;width: 1100px; height: 500px&quot;&gt; &lt;/embed&gt;&lt;/object&gt;
 
-&lt;div align=&quot;right&quot;&gt; [[Next-&gt;Guess Who]] &lt;/div&gt;
+&lt;div id = &quot;sentence&quot;&gt;&lt;/div&gt;
+&lt;/br&gt;
+&lt;div id = &quot;nextButton&quot; style=&quot;display: none;&quot; align=&quot;right&quot;&gt; [[Next-&gt;Guess Who]] &lt;/div&gt;
 </tw-passagedata><tw-passagedata pid="10" name="Guess Who" tags="" position="308,386">Here is a Guess Who board to review:
 
 &lt;object&gt; &lt;embed src=../guess-who/index.html style=&quot;width: 1100px; height: 600px&quot;&gt; &lt;/embed&gt;&lt;/object&gt;
