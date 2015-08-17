@@ -180,13 +180,41 @@ document.twine.dumpRequests = function() {
 
 document.twine.UUID = function() {
     var d = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	  var uuidFormat = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    var uuid = uuidFormat.replace(/[xy]/g, function(c) {
         var r = (d + Math.random()*16)%16 | 0;
         d = Math.floor(d/16);
         return (c=='x' ? r : (r&0x3|0x8)).toString(16);
     });
     return uuid;
-};</script><tw-passagedata pid="1" name="Start" tags="chapter" position="305,32">&lt;font size=&quot;6&quot;&gt;&lt;b&gt;Lesson 1&lt;/b&gt;&lt;/font&gt;
+};
+
+// Session timeout code
+
+document.globals.idleTime = 0;
+$(document).ready(function () {
+    //Increment the idle time counter every minute.
+    var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+
+    //Zero the idle timer on mouse movement.
+    $(this).mousemove(function (e) {
+        document.globals.idleTime = 0;
+    });
+    $(this).keypress(function (e) {
+        document.globals.idleTime = 0;
+    });
+});
+
+function timerIncrement() {
+    document.globals.idleTime = document.globals.idleTime + 1;
+	  console.log("Inactive minutes: " + document.globals.idleTime);
+    if (document.globals.idleTime > 19) { // 20 minutes
+      if (confirm('Your session is inactive, would you like to restart?')) {
+      	window.location.reload();
+  	  }
+    }
+}
+</script><tw-passagedata pid="1" name="Start" tags="chapter" position="305,32">&lt;font size=&quot;6&quot;&gt;&lt;b&gt;Lesson 1&lt;/b&gt;&lt;/font&gt;
 
 Here are the instructions to start the lesson:
 
