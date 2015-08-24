@@ -8,6 +8,7 @@
 
 
 
+
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">document.twine = {};
 document.globals = {};
 
@@ -144,24 +145,26 @@ function Request(url, params) {
 }
 
 document.twine.post = function(urlSuffix, params, preventDump) {
+	hashCode = params.hashCode();
+	var hashParams = params + "&hash=" + hashCode;
   var url = "http://ec2-52-25-110-29.us-west-2.compute.amazonaws.com/Project/" + urlSuffix;
   var request = new XMLHttpRequest();
   request.onreadystatechange = function() {
       if (request.readyState == 4) {
           if (request.status == 200) {
-              console.log("success posting to url " + url + " with params " + params);
+              console.log("success posting to url " + url + " with params " + hashParams);
               if (!preventDump) {
               	document.twine.dumpRequests();
               }
           } else {
-              console.log("failure posting to url " + url + " with params " + params);
+              console.log("failure posting to url " + url + " with params " + hashParams);
               document.twine.arrPush("syncQueue", new Request(urlSuffix, params));
           }
       }
   };
   request.open("POST", url, true);
   request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  request.send(params);
+  request.send(hashParams);
 }
 
 document.twine.saveRequest = function(url, params) {
@@ -175,6 +178,17 @@ document.twine.dumpRequests = function() {
         document.twine.post(request.url, request.params, true);
     }
 }
+
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr, len;
+  if (this.length == 0) return hash;
+  for (i = 0, len = this.length; i < len; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash %= 1 << 26; // Prevent 32-bit overflow on next loop
+  }
+  return hash;
+};
 
 // UUID generation code
 
@@ -214,6 +228,7 @@ function timerIncrement() {
   	  }
     }
 }
+
 </script><tw-passagedata pid="1" name="Start" tags="chapter" position="305,32">&lt;font size=&quot;6&quot;&gt;&lt;b&gt;Lesson 1&lt;/b&gt;&lt;/font&gt;
 
 Here are the instructions to start the lesson:
@@ -265,12 +280,12 @@ Here are the instructions to start the lesson:
 &lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name=" Guess Who 3p" tags="" position="498,755">Here is some content for 3 or more people.
 
 &lt;div align=&quot;right&quot;&gt; [[Next-&gt; Guess Who Question]] &lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name=" Guess Who Question" tags="chapter" position="308,916">Here is a question with the [[right answer]] and the [[wrong answer]]</tw-passagedata><tw-passagedata pid="7" name="right answer" tags="" position="224,1064">&lt;%
-	document.twine.post(&quot;game/response&quot;, &quot;name=&quot; + document.twine.studentUUID + &quot;;answer=right&quot;);
+	document.twine.post(&quot;game/response&quot;, &quot;name=&quot; + document.twine.studentUUID + &quot;&amp;answer=right&quot;);
     document.twine.answerRight();
 %&gt;
 
 Good job! This is the end of the lesson.</tw-passagedata><tw-passagedata pid="8" name="wrong answer" tags="" position="379,1059">&lt;%
-	document.twine.post(&quot;game/response&quot;, &quot;name=&quot; + document.twine.studentUUID + &quot;;answer=wrong&quot;);
+	document.twine.post(&quot;game/response&quot;, &quot;name=&quot; + document.twine.studentUUID + &quot;&amp;answer=wrong&quot;);
     document.twine.answerWrong();
 %&gt;
 
